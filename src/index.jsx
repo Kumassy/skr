@@ -16,10 +16,12 @@ class Canvas extends React.Component {
   constructor (){
     super();
     this.dx = 2;
-    // this.dy = 1;
+    this.dy = 1;
     this.isJumping = false;
+    this.walls = [];
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
+    this._handleKeyUp = this._handleKeyUp.bind(this);
   }
 
   componentDidMount(){
@@ -42,6 +44,27 @@ class Canvas extends React.Component {
     // createjs.Ticker.addEventListener("tick", this.stage);
 
 
+    const wall = new createjs.Shape();
+    wall.graphics.beginFill("Green").drawRect(0, 464, 800, 10);
+    // wall.graphics.beginFill("Green").drawRect(0, 0, 800, 10);
+    // wall.x = 0;
+    // wall.y = 464;
+    wall.setBounds(0, 464, 800, 10);
+    this.stage.addChild(wall);
+    this.stage.update();
+    this.walls.push(wall);
+
+    const wall2 = new createjs.Shape();
+    wall2.graphics.beginFill("Green").drawRect(400, 380, 200, 10);
+    // wall2.graphics.beginFill("Green").drawRect(0, 0, 400, 10);
+    // wall.x = 400;
+    // wall.y = 380;
+    wall.setBounds(400, 380, 200, 10);
+    this.stage.addChild(wall2);
+    this.stage.update();
+    this.walls.push(wall2);
+
+
     const player = new createjs.Bitmap("img/kumassy.jpg");
     this.stage.addChild(player);
     player.y = 400;
@@ -51,7 +74,26 @@ class Canvas extends React.Component {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener('tick', () => {
         player.x += this.dx;
-        // player.y += this.dy;
+        player.y += this.dy;
+
+        // colision detection
+        for(let wall of this.walls){
+          const wallRect = wall.getTransformedBounds();
+          // const wallRect = wall;
+          const playerRect = this.player.getTransformedBounds();
+
+          // console.log(wallRect);
+          // console.log(playerRect);
+          // playerRect.x;
+
+
+          if(wallRect && playerRect && wallRect.x - playerRect.width <= playerRect.x && playerRect.x <= (wallRect.x + wallRect.width) && wallRect.y - playerRect.height <= playerRect.y && playerRect.y <= (wallRect.y + wallRect.height)){
+              console.log("hit");
+
+          }
+
+
+        }
         this.stage.update();
     });
 
@@ -63,22 +105,26 @@ class Canvas extends React.Component {
     // window.addEventListener('keyup', this._handleKeyDown);
     // window.addEventListener('keypress', this._handleKeyDown);
     document.addEventListener('keydown', this._handleKeyDown);
-    // document.addEventListener('keyup', this._handleKeyDown);
+    document.addEventListener('keyup', this._handleKeyUp);
     // document.addEventListener('keypress', this._handleKeyDown);
+  }
+
+  _handleKeyUp (event) {
+    this.dx = this.dy = 0;
   }
 
   _handleKeyDown (event) {
     if(event.code === "ArrowLeft"){
-      this.dx = Math.abs(this.dx) * -1;
+      this.dx = -2;
     }
     else if(event.code === "ArrowRight"){
-      this.dx = Math.abs(this.dx);
+      this.dx = 2;
     }
     else if(event.code === "ArrowUp"){
-      this.dy = Math.abs(this.dy) * -1;
+      this.dy = -2;
     }
     else if(event.code === "ArrowDown"){
-      this.dy = Math.abs(this.dy);
+      this.dy = 2;
     }
     else if(event.code === "Space"){
       if(this.isJumping) return;
@@ -95,7 +141,7 @@ class Canvas extends React.Component {
         });
 
     }
-    console.log(event);
+    // console.log(event);
   }
 
   render () {
