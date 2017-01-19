@@ -15,8 +15,11 @@ class App extends React.Component {
 class Canvas extends React.Component {
   constructor (){
     super();
+    this.dx = 2;
+    // this.dy = 1;
+    this.isJumping = false;
 
-    // this._handleKeyDown = this._handleKeyDown.bind(this);
+    this._handleKeyDown = this._handleKeyDown.bind(this);
   }
 
   componentDidMount(){
@@ -41,10 +44,14 @@ class Canvas extends React.Component {
 
     const player = new createjs.Bitmap("img/kumassy.jpg");
     this.stage.addChild(player);
+    player.y = 400;
+    this.player = player;
 
 
-    createjs.Ticker.setFPS(30);
+    createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener('tick', () => {
+        player.x += this.dx;
+        // player.y += this.dy;
         this.stage.update();
     });
 
@@ -52,15 +59,42 @@ class Canvas extends React.Component {
   }
 
   componentWillMount (){
-    window.addEventListener('keydown', this._handleKeyDown);
-    window.addEventListener('keyup', this._handleKeyDown);
-    window.addEventListener('keypress', this._handleKeyDown);
+    // window.addEventListener('keydown', this._handleKeyDown);
+    // window.addEventListener('keyup', this._handleKeyDown);
+    // window.addEventListener('keypress', this._handleKeyDown);
     document.addEventListener('keydown', this._handleKeyDown);
-    document.addEventListener('keyup', this._handleKeyDown);
-    document.addEventListener('keypress', this._handleKeyDown);
+    // document.addEventListener('keyup', this._handleKeyDown);
+    // document.addEventListener('keypress', this._handleKeyDown);
   }
 
   _handleKeyDown (event) {
+    if(event.code === "ArrowLeft"){
+      this.dx = Math.abs(this.dx) * -1;
+    }
+    else if(event.code === "ArrowRight"){
+      this.dx = Math.abs(this.dx);
+    }
+    else if(event.code === "ArrowUp"){
+      this.dy = Math.abs(this.dy) * -1;
+    }
+    else if(event.code === "ArrowDown"){
+      this.dy = Math.abs(this.dy);
+    }
+    else if(event.code === "Space"){
+      if(this.isJumping) return;
+      this.isJumping = true;
+
+      const y = this.player.y;
+      const jump = 100;
+
+      createjs.Tween.get(this.player)
+        .to({y: y - jump}, 300, createjs.Ease.cubicOut)
+        .to({y: y}, 300, createjs.Ease.cubicIn)
+        .call(() => {
+          this.isJumping = false;
+        });
+
+    }
     console.log(event);
   }
 

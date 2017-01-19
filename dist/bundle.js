@@ -54,6 +54,8 @@
 
 	var _reactDom = __webpack_require__(32);
 
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61,6 +63,8 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	// import {render, ReactDOM} from 'react-dom';
+
 
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
@@ -75,14 +79,87 @@
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        'p',
+	        'div',
 	        null,
-	        ' Hello React!'
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          ' Hello React!'
+	        ),
+	        _react2.default.createElement(Canvas, null)
 	      );
 	    }
 	  }]);
 
 	  return App;
+	}(_react2.default.Component);
+
+	var Canvas = function (_React$Component2) {
+	  _inherits(Canvas, _React$Component2);
+
+	  function Canvas() {
+	    _classCallCheck(this, Canvas);
+
+	    return _possibleConstructorReturn(this, (Canvas.__proto__ || Object.getPrototypeOf(Canvas)).call(this));
+
+	    // this._handleKeyDown = this._handleKeyDown.bind(this);
+	  }
+
+	  _createClass(Canvas, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this3 = this;
+
+	      var canvas = _reactDom2.default.findDOMNode(this.refs.canvas);
+	      this.stage = new createjs.Stage(canvas);
+	      var circle = new createjs.Shape();
+	      circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
+	      circle.x = 100;
+	      circle.y = 100;
+	      this.stage.addChild(circle);
+	      this.stage.update();
+
+	      // createjs.Tween.get(circle, { loop: true })
+	      //   .to({ x: 400 }, 1000, createjs.Ease.getPowInOut(4))
+	      //   .to({ alpha: 0, y: 175 }, 500, createjs.Ease.getPowInOut(2))
+	      //   .to({ alpha: 0, y: 225 }, 100)
+	      //   .to({ alpha: 1, y: 200 }, 500, createjs.Ease.getPowInOut(2))
+	      //   .to({ x: 100 }, 800, createjs.Ease.getPowInOut(2));
+	      // createjs.Ticker.setFPS(60);
+	      // createjs.Ticker.addEventListener("tick", this.stage);
+
+
+	      var player = new createjs.Bitmap("img/kumassy.jpg");
+	      this.stage.addChild(player);
+
+	      createjs.Ticker.setFPS(30);
+	      createjs.Ticker.addEventListener('tick', function () {
+	        _this3.stage.update();
+	      });
+	    }
+	  }, {
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      window.addEventListener('keydown', this._handleKeyDown);
+	      window.addEventListener('keyup', this._handleKeyDown);
+	      window.addEventListener('keypress', this._handleKeyDown);
+	      document.addEventListener('keydown', this._handleKeyDown);
+	      document.addEventListener('keyup', this._handleKeyDown);
+	      document.addEventListener('keypress', this._handleKeyDown);
+	    }
+	  }, {
+	    key: '_handleKeyDown',
+	    value: function _handleKeyDown(event) {
+	      console.log(event);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('canvas', { ref: 'canvas', width: '1000', height: '600' });
+	    }
+	  }]);
+
+	  return Canvas;
 	}(_react2.default.Component);
 
 	(0, _reactDom.render)(_react2.default.createElement(App, null), document.getElementById('app'));
